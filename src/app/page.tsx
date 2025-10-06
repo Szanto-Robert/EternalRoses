@@ -1,103 +1,267 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useRef } from "react";
+
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+};
+
+const products: Product[] = [
+  { id: 1, name: "Red Roses Bouquet", price: 20, image: "/rose1.jpg" },
+  { id: 2, name: "Pink Roses Bouquet", price: 18, image: "/rose2.jpg" },
+  { id: 3, name: "White Roses Bouquet", price: 22, image: "/rose3.jpg" },
+];
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
+  const [checkout, setCheckout] = useState(false);
+  const [form, setForm] = useState({
+    nume: "",
+    telefon: "",
+    judet: "",
+    localitate: "",
+    strada: "",
+    numar: "",
+    codPostal: "",
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const checkoutRef = useRef<HTMLDivElement>(null);
+
+  // Track quantity for each product
+  const [quantities, setQuantities] = useState<{ [key: number]: number }>(
+    products.reduce((acc, p) => ({ ...acc, [p.id]: 1 }), {})
+  );
+
+  const addToCart = (product: Product, quantity: number) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.product.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      }
+      return [...prev, { product, quantity }];
+    });
+  };
+
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((item) => item.product.id !== id));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleQuantityChange = (id: number, value: number) => {
+    setQuantities({ ...quantities, [id]: value });
+  };
+
+  const handleOrder = () => {
+    alert(
+      `Thank you, ${form.nume}! We will contact you at ${form.telefon} to confirm your order.`
+    );
+    setCart([]);
+    setCheckout(false);
+    setForm({
+      nume: "",
+      telefon: "",
+      judet: "",
+      localitate: "",
+      strada: "",
+      numar: "",
+      codPostal: "",
+    });
+  };
+
+  const scrollToCheckout = () => {
+    setCheckout(true);
+    setTimeout(() => {
+      checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
+  return (
+    <main className="min-h-screen bg-pink-50 font-sans">
+      {/* Hero Section */}
+      <section className="text-center py-20 bg-pink-200">
+        <h1 className="text-5xl font-bold text-red-700">Eternal Roses</h1>
+        <p className="mt-4 text-xl text-red-900">
+          Fresh Roses, Straight from Our Garden 🌹
+        </p>
+      </section>
+
+      {/* Products Section */}
+      <section className="py-16 px-8">
+        <h2 className="text-3xl font-bold text-center mb-12 text-red-700">
+          Our Bouquets
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white rounded-xl shadow-lg p-6 text-center"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="mx-auto mb-4 rounded-lg h-48 object-cover"
+              />
+              <h3 className="text-xl font-semibold text-red-700 mb-2">{product.name}</h3>
+              <p className="text-red-900 font-bold mb-4">${product.price}</p>
+
+              {/* Quantity input */}
+              <div className="flex justify-center items-center mb-4">
+                <input
+                  type="number"
+                  min={1}
+                  value={quantities[product.id]}
+                  onChange={(e) =>
+                    handleQuantityChange(product.id, Number(e.target.value))
+                  }
+                  className="w-16 p-1 border rounded text-center mr-2 text-black bg-white"
+                />
+                <span className="text-black">pcs</span>
+              </div>
+
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                onClick={() => addToCart(product, quantities[product.id])}
+              >
+                Add to Cart
+              </button>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+
+      {/* Cart Section */}
+      <section className="py-16 px-8 bg-red-50">
+        <h2 className="text-3xl font-bold text-center mb-8 text-red-700">
+          Your Cart
+        </h2>
+        {cart.length === 0 && <p className="text-center text-red-900">Your cart is empty.</p>}
+        {cart.length > 0 && (
+          <div className="max-w-xl mx-auto">
+            {cart.map((item) => (
+              <div
+                key={item.product.id}
+                className="flex justify-between items-center bg-white p-4 rounded mb-4 shadow"
+              >
+                <div>
+                  <h3 className="font-semibold text-red-700">{item.product.name}</h3>
+                  <p className="text-red-900">
+                    ${item.product.price} x {item.quantity}
+                  </p>
+                </div>
+                <button
+                  className="text-red-600 hover:text-red-800"
+                  onClick={() => removeFromCart(item.product.id)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+              onClick={scrollToCheckout}
+            >
+              Proceed to Checkout
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* Checkout Form */}
+      {checkout && (
+        <section ref={checkoutRef} className="py-16 px-8">
+          <h2 className="text-3xl font-bold text-center mb-8 text-red-700">
+            Checkout
+          </h2>
+          <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
+            <label className="block mb-4 text-red-700">
+              Nume:
+              <input
+                type="text"
+                name="nume"
+                value={form.nume}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <label className="block mb-4 text-red-700">
+              Telefon:
+              <input
+                type="text"
+                name="telefon"
+                value={form.telefon}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <label className="block mb-4 text-red-700">
+              Județul:
+              <input
+                type="text"
+                name="judet"
+                value={form.judet}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <label className="block mb-4 text-red-700">
+              Localitatea:
+              <input
+                type="text"
+                name="localitate"
+                value={form.localitate}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <label className="block mb-4 text-red-700">
+              Strada:
+              <input
+                type="text"
+                name="strada"
+                value={form.strada}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <label className="block mb-4 text-red-700">
+              Numărul:
+              <input
+                type="text"
+                name="numar"
+                value={form.numar}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <label className="block mb-4 text-red-700">
+              Cod poștal:
+              <input
+                type="text"
+                name="codPostal"
+                value={form.codPostal}
+                onChange={handleInputChange}
+                className="w-full mt-1 p-2 border rounded text-black"
+              />
+            </label>
+            <button
+              className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+              onClick={handleOrder}
+            >
+              Place Order
+            </button>
+          </div>
+        </section>
+      )}
+    </main>
   );
 }
