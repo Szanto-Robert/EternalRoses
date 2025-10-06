@@ -87,13 +87,31 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-pink-50 font-sans">
-      {/* Hero Section */}
-      <section className="text-center py-20 bg-pink-200">
-        <h1 className="text-5xl font-bold text-red-700">Eternal Roses</h1>
-        <p className="mt-4 text-xl text-red-900">
-          Fresh Roses, Straight from Our Garden 🌹
-        </p>
-      </section>
+      {/* Hero Section with Video */}
+      <section className="relative w-full flex justify-center overflow-hidden">
+  {/* Video at original size */}
+  <video
+    className="z-0"
+    autoPlay
+    loop
+    muted
+    playsInline
+    width={1680}  // original width
+    height={480}  // original height
+    src="/rose-video.mp4"
+  />
+
+  {/* Overlay for text */}
+  <div className="absolute top-0 left-0 w-full h-full bg-opacity-40 flex flex-col items-center justify-center px-4">
+    <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center">
+      Eternal Roses
+    </h1>
+    <p className="mt-4 text-lg sm:text-xl md:text-2xl text-white text-center">
+      Fresh Roses, Straight from Our Garden 🌹
+    </p>
+  </div>
+</section>
+
 
       {/* Products Section */}
       <section className="py-16 px-8">
