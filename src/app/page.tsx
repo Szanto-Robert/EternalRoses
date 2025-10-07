@@ -111,19 +111,19 @@ export default function Home() {
         {/* Overlay for text */}
         <div className="absolute top-0 left-0 w-full h-full bg-opacity-40 flex flex-col items-center justify-center px-4">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center">
-            The Beautiful Beginning
+            Din inima naturii, în ghiveciul tău
           </h1>
           <p className="mt-4 text-lg sm:text-xl md:text-2xl text-white text-center">
-            Fresh Roses, Straight from Our Garden
+            Frumusețe născută în grădina noastră
           </p>
         </div>
       </section>
 
 
       {/* Products Section */}
-      <section className="py-16 px-8">
+      <section className="pt-12 pb-16 px-8">
         <h2 className="text-3xl font-bold text-center mb-12 text-red-700">
-          Our Bouquets
+          Alege trandafirul perfect pentru casa ta
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {products.map((product) => (
@@ -167,9 +167,9 @@ export default function Home() {
       {/* Cart Section */}
       <section className="py-16 px-8 bg-red-50">
         <h2 className="text-3xl font-bold text-center mb-8 text-red-700">
-          Your Cart
+          Coșul tău
         </h2>
-        {cart.length === 0 && <p className="text-center text-red-900">Your cart is empty.</p>}
+        {cart.length === 0 && <p className="text-center text-red-900">Coșul tău este gol.</p>}
         {cart.length > 0 && (
           <div className="max-w-xl mx-auto">
             {cart.map((item) => (
@@ -187,7 +187,7 @@ export default function Home() {
                   className="text-red-600 hover:text-red-800"
                   onClick={() => removeFromCart(item.product.id)}
                 >
-                  Remove
+                  Șterge
                 </button>
               </div>
             ))}
@@ -195,7 +195,7 @@ export default function Home() {
               className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
               onClick={scrollToCheckout}
             >
-              Proceed to Checkout
+              Finalizează comanda
             </button>
           </div>
         )}
@@ -205,7 +205,7 @@ export default function Home() {
       {checkout && (
         <section ref={checkoutRef} className="py-16 px-8">
           <h2 className="text-3xl font-bold text-center mb-8 text-red-700">
-            Checkout
+            Finalizare comandă
           </h2>
           <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
             <label className="block mb-4 text-red-700">
@@ -282,7 +282,7 @@ export default function Home() {
               className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
               onClick={handleOrder}
             >
-              Place Order
+              Plasează comanda
             </button>
           </div>
         </section>
