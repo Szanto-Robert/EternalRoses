@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
+import { CartProvider, useCart } from "./context/CartContext";
+import FloatingCartIcon from "./components/FloatingCartIcon";
 
 type Product = {
   id: number;
@@ -9,15 +11,17 @@ type Product = {
   image: string;
 };
 
+// Demo products
 const products: Product[] = [
   { id: 1, name: "Red Roses Bouquet", price: 20, image: "/rose1.jpg" },
   { id: 2, name: "Pink Roses Bouquet", price: 18, image: "/rose2.jpg" },
   { id: 3, name: "White Roses Bouquet", price: 22, image: "/rose3.jpg" },
 ];
 
-export default function Home() {
-  const [cart, setCart] = useState<{ product: Product; quantity: number }[]>([]);
-  const [checkout, setCheckout] = useState(false);
+// 🧩 Main component that uses the Cart Context
+function HomeContent() {
+  const { cartItems, addToCart, removeFromCart } = useCart();
+  const { checkout, setCheckout } = useCart();
   const [form, setForm] = useState({
     nume: "",
     telefon: "",
@@ -27,35 +31,11 @@ export default function Home() {
     numar: "",
     codPostal: "",
   });
-
-  const checkoutRef = useRef<HTMLDivElement>(null);
-
-  // Track quantity for each product
   const [quantities, setQuantities] = useState<{ [key: number]: number }>(
     products.reduce((acc, p) => ({ ...acc, [p.id]: 1 }), {})
   );
 
-  const addToCart = (product: Product, quantity: number) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prev, { product, quantity }];
-    });
-  };
-
-  const removeFromCart = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.product.id !== id));
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const checkoutRef = useRef<HTMLDivElement>(null);
 
   const handleQuantityChange = (id: number, value: number) => {
     setQuantities({ ...quantities, [id]: value });
@@ -63,10 +43,8 @@ export default function Home() {
 
   const handleOrder = () => {
     alert(
-      `Thank you, ${form.nume}! We will contact you at ${form.telefon} to confirm your order.`
+      `Mulțumim, ${form.nume}! Te vom contacta la ${form.telefon} pentru confirmarea comenzii.`
     );
-    setCart([]);
-    setCheckout(false);
     setForm({
       nume: "",
       telefon: "",
@@ -78,37 +56,38 @@ export default function Home() {
     });
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const scrollToCheckout = () => {
     setCheckout(true);
     setTimeout(() => {
       checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    }, 200);
   };
 
   return (
     <main className="min-h-screen bg-pink-50 font-sans">
-      {/* Company Name Header */}
+      {/* Header */}
       <header className="w-full bg-pink-200 py-8">
         <h1 className="text-5xl font-bold text-red-700 text-center">
           Eternal Roses
         </h1>
       </header>
 
-      {/* Hero Section with Video */}
+      {/* Hero Section */}
       <section className="relative w-full flex justify-center overflow-hidden">
-        {/* Video at original size */}
         <video
           className="z-0"
           autoPlay
           loop
           muted
           playsInline
-          width={1680}  // original width
-          height={480}  // original height
+          width={1680}
+          height={480}
           src="/rose-video.mp4"
         />
-
-        {/* Overlay for text */}
         <div className="absolute top-0 left-0 w-full h-full bg-opacity-40 flex flex-col items-center justify-center px-4">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white text-center">
             Din inima naturii, în ghiveciul tău
@@ -119,8 +98,7 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* Products Section */}
+      {/* Products */}
       <section className="pt-12 pb-16 px-8">
         <h2 className="text-3xl font-bold text-center mb-12 text-red-700">
           Alege trandafirul perfect pentru casa ta
@@ -136,7 +114,9 @@ export default function Home() {
                 alt={product.name}
                 className="mx-auto mb-4 rounded-lg h-48 object-cover"
               />
-              <h3 className="text-xl font-semibold text-red-700 mb-2">{product.name}</h3>
+              <h3 className="text-xl font-semibold text-red-700 mb-2">
+                {product.name}
+              </h3>
               <p className="text-red-900 font-bold mb-4">${product.price}</p>
 
               {/* Quantity input */}
@@ -155,9 +135,15 @@ export default function Home() {
 
               <button
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                onClick={() => addToCart(product, quantities[product.id])}
+                onClick={() =>
+                  addToCart({
+                    ...product,
+                    quantity: quantities[product.id],
+                  })
+                }
+
               >
-                Add to Cart
+                Adaugă în coș
               </button>
             </div>
           ))}
@@ -165,27 +151,31 @@ export default function Home() {
       </section>
 
       {/* Cart Section */}
-      <section className="py-16 px-8 bg-red-50">
+      <section id="cart-summary" className="py-16 px-8 bg-red-50">
         <h2 className="text-3xl font-bold text-center mb-8 text-red-700">
           Coșul tău
         </h2>
-        {cart.length === 0 && <p className="text-center text-red-900">Coșul tău este gol.</p>}
-        {cart.length > 0 && (
+        {cartItems.length === 0 && (
+          <p className="text-center text-red-900">Coșul tău este gol.</p>
+        )}
+        {cartItems.length > 0 && (
           <div className="max-w-xl mx-auto">
-            {cart.map((item) => (
+            {cartItems.map((item) => (
               <div
-                key={item.product.id}
+                key={item.id}
                 className="flex justify-between items-center bg-white p-4 rounded mb-4 shadow"
               >
                 <div>
-                  <h3 className="font-semibold text-red-700">{item.product.name}</h3>
+                  <h3 className="font-semibold text-red-700">
+                    {item.name}
+                  </h3>
                   <p className="text-red-900">
-                    ${item.product.price} x {item.quantity}
+                    ${item.price} x {item.quantity}
                   </p>
                 </div>
                 <button
                   className="text-red-600 hover:text-red-800"
-                  onClick={() => removeFromCart(item.product.id)}
+                  onClick={() => removeFromCart(item.id)}
                 >
                   Șterge
                 </button>
@@ -203,81 +193,26 @@ export default function Home() {
 
       {/* Checkout Form */}
       {checkout && (
-        <section ref={checkoutRef} className="py-16 px-8">
+        <section ref={checkoutRef} id="finalizare-comanda" className="py-16 px-8">
           <h2 className="text-3xl font-bold text-center mb-8 text-red-700">
             Finalizare comandă
           </h2>
           <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
-            <label className="block mb-4 text-red-700">
-              Nume:
-              <input
-                type="text"
-                name="nume"
-                value={form.nume}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
-            <label className="block mb-4 text-red-700">
-              Telefon:
-              <input
-                type="text"
-                name="telefon"
-                value={form.telefon}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
-            <label className="block mb-4 text-red-700">
-              Județul:
-              <input
-                type="text"
-                name="judet"
-                value={form.judet}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
-            <label className="block mb-4 text-red-700">
-              Localitatea:
-              <input
-                type="text"
-                name="localitate"
-                value={form.localitate}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
-            <label className="block mb-4 text-red-700">
-              Strada:
-              <input
-                type="text"
-                name="strada"
-                value={form.strada}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
-            <label className="block mb-4 text-red-700">
-              Numărul:
-              <input
-                type="text"
-                name="numar"
-                value={form.numar}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
-            <label className="block mb-4 text-red-700">
-              Cod poștal:
-              <input
-                type="text"
-                name="codPostal"
-                value={form.codPostal}
-                onChange={handleInputChange}
-                className="w-full mt-1 p-2 border rounded text-black"
-              />
-            </label>
+            {Object.entries(form).map(([key, value]) => (
+              <label
+                key={key}
+                className="block mb-4 text-red-700 capitalize"
+              >
+                {key}:
+                <input
+                  type="text"
+                  name={key}
+                  value={value}
+                  onChange={handleInputChange}
+                  className="w-full mt-1 p-2 border rounded text-black"
+                />
+              </label>
+            ))}
             <button
               className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
               onClick={handleOrder}
@@ -288,5 +223,15 @@ export default function Home() {
         </section>
       )}
     </main>
+  );
+}
+
+// 🛍 Wrap the app with CartProvider
+export default function Home() {
+  return (
+    <CartProvider>
+      <HomeContent />
+      <FloatingCartIcon />
+    </CartProvider>
   );
 }
