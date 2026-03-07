@@ -247,9 +247,6 @@ function HomeContent() {
                 <p className="text-red-900 font-bold text-2xl mb-2">
                   {product.promoPrice} lei
                 </p>
-                <p className="text-sm text-gray-700 mb-4">
-                  Transformă-ți grădina într-un colț de paradis 🌹
-                </p>
                 {/* Adaugă în coș button hidden, will be shown in modal */}
             </div>
           ))}
