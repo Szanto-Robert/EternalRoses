@@ -10,36 +10,37 @@ export type Product = {
   originalPrice: number;
   promoPrice: number;
   images: string[];
+  description: string;
 };
 
-// All rose varieties
+// All rose varieties with Wikipedia-based descriptions
 export const products: Product[] = [
-  { id: 1, name: "Grand Gala", originalPrice: 50, promoPrice: 25, images: ["/Grand-Gala.jpg","/Grand-Gala2.jpg"] },
-  { id: 2, name: "Rumba", originalPrice: 40, promoPrice: 25, images: ["/Rumba.jpg","/Rumba2.jpg"] },
-  { id: 3, name: "Double Delight", originalPrice: 45, promoPrice: 25, images: ["/DoubleDelight.jpg","/DoubleDelight2.jpg"] },
-  { id: 4, name: "Keiro", originalPrice: 30, promoPrice: 25, images: ["/Keiro.jpg","/Keiro2.jpg"] },
-  { id: 5, name: "Jalitah", originalPrice: 35, promoPrice: 25, images: ["/Jalitah.jpg","/Jalitah2.jpg"] },
-  { id: 6, name: "Diamond Design", originalPrice: 40, promoPrice: 25, images: ["/DiamondDesign.jpg","/DiamondDesign2.jpg"] },
-  { id: 7, name: "Maria Theresia", originalPrice: 50, promoPrice: 25, images: ["/MariaTheresia.jpg","/MariaTheresia2.jpg"] },
-  { id: 8, name: "Graham Thomas", originalPrice: 45, promoPrice: 25, images: ["/GrahamThomas.jpg","/GrahamThomas2.jpg"] },
-  { id: 9, name: "Eden Rosen", originalPrice: 45, promoPrice: 25, images: ["/EdenRosen.jpg","/EdenRosen2.jpg"] },
-  { id: 10, name: "Black Magic", originalPrice: 60, promoPrice: 25, images: ["/BlackMagic.jpg","/BlackMagic2.jpg"] },
-  { id: 11, name: "Lavender", originalPrice: 40, promoPrice: 25, images: ["/Lavender.jpg","/Lavender2.jpg"] },
-  { id: 12, name: "Westerland", originalPrice: 55, promoPrice: 25, images: ["/Westerland.jpg","/Westerland2.jpg"] },
-  { id: 13, name: "Kristal", originalPrice: 45, promoPrice: 25, images: ["/kristal.jpg","/kristal2.jpg"] },
-  { id: 14, name: "Artemis", originalPrice: 50, promoPrice: 25, images: ["/Artemis.jpg","/Artemis2.jpg"] },
-  { id: 15, name: "Sympathie", originalPrice: 52, promoPrice: 25, images: ["/Sympathie.jpg","/Sympathie2.jpg"] },
-  { id: 16, name: "Red Intuition", originalPrice: 48, promoPrice: 25, images: ["/RedIntuition.jpg","/RedIntuition2.jpg"] },
-  { id: 17, name: "Osiria", originalPrice: 46, promoPrice: 25, images: ["/Osiria.jpg","/Osiria2.jpg"] },
-  { id: 18, name: "Black Madona", originalPrice: 53, promoPrice: 25, images: ["/BlackMadona.jpg","/BlackMadona2.jpg"] },
-  { id: 19, name: "Alinka", originalPrice: 30, promoPrice: 25, images: ["/Alinka.jpg","/Alinka2.jpg"] },
-  { id: 20, name: "Remy Martin", originalPrice: 32, promoPrice: 25, images: ["/RemyMartin.jpg","/RemyMartin2.jpg"] },
-  { id: 21, name: "Dulceata de Gem", originalPrice: 39, promoPrice: 25, images: ["/DulceataDeGem.jpg","/DulceataDeGem2.jpg"] },
-  { id: 22, name: "Indigoletta Urcator", originalPrice: 41, promoPrice: 25, images: ["/IndigolettaUrcator.jpg","/IndigolettaUrcator2.jpg"] },
-  { id: 23, name: "Red Berlin", originalPrice: 65, promoPrice: 25, images: ["/RedBerlin.jpg","/RedBerlin2.jpg"] },
-  { id: 24, name: "Peace", originalPrice: 45, promoPrice: 25, images: ["/Peace.jpg","/Peace2.jpg"] },
-  { id: 25, name: "Alb Urcator", originalPrice: 45, promoPrice: 25, images: ["/AlbUrcator.jpg","/AlbUrcator2.jpg"] },
-  { id: 26, name: "Golden Showers", originalPrice: 55, promoPrice: 25, images: ["/GoldenShowers.jpg","/GoldenShowers2.jpg"] },
+  { id: 1, name: "Grand Gala", originalPrice: 50, promoPrice: 25, images: ["/Grand-Gala.jpg","/Grand-Gala2.jpg"], description: "Grand Gala este un trandafir hibrid de ceai, cu flori mari, roșu intens și petale catifelate. Ideal pentru grădini elegante." },
+  { id: 2, name: "Rumba", originalPrice: 40, promoPrice: 25, images: ["/Rumba.jpg","/Rumba2.jpg"], description: "Rumba este un trandafir floribunda cu petale galbene și roșii, flori mici spre medii în buchete. Culoare vie și creștere compactă." },
+  { id: 3, name: "Double Delight", originalPrice: 45, promoPrice: 25, images: ["/DoubleDelight.jpg","/DoubleDelight2.jpg"], description: "Double Delight este un trandafir hibrid de ceai, cu petale crem cu margini roșii și parfum intens. Florile sunt mari și atrăgătoare." },
+  { id: 4, name: "Keiro", originalPrice: 30, promoPrice: 25, images: ["/Keiro.jpg","/Keiro2.jpg"], description: "Keiro este un trandafir cu petale portocalii-galbene și formă compactă. Florile sunt medii și aduc căldură grădinii." },
+  { id: 5, name: "Jalitah", originalPrice: 35, promoPrice: 25, images: ["/Jalitah.jpg","/Jalitah2.jpg"], description: "Jalitah este un trandafir cu petale roz pal și aspect delicat. Florile sunt medii, ideale pentru decor." },
+  { id: 6, name: "Diamond Design", originalPrice: 40, promoPrice: 25, images: ["/DiamondDesign.jpg","/DiamondDesign2.jpg"], description: "Diamond Design este un trandafir modern cu petale albe și crem, flori elegante de dimensiune medie. Apreciat pentru puritate și frumusețe." },
+  { id: 7, name: "Maria Theresia", originalPrice: 50, promoPrice: 25, images: ["/MariaTheresia.jpg","/MariaTheresia2.jpg"], description: "Maria Theresia este un trandafir roz clasic, cu flori mari, parfum delicat și aspect romantic. Perfect pentru buchete." },
+  { id: 8, name: "Graham Thomas", originalPrice: 45, promoPrice: 25, images: ["/GrahamThomas.jpg","/GrahamThomas2.jpg"], description: "Graham Thomas este un trandafir englezesc cu petale galbene și parfum intens. Florile sunt medii spre mari, planta viguroasă." },
+  { id: 9, name: "Eden Rosen", originalPrice: 45, promoPrice: 25, images: ["/EdenRosen.jpg","/EdenRosen2.jpg"], description: "Eden Rose (Pierre de Ronsard) are flori mari, crem-roz, cu aspect romantic. Este trandafir urcător, ideal pentru pergole." },
+  { id: 10, name: "Black Magic", originalPrice: 60, promoPrice: 25, images: ["/BlackMagic.jpg","/BlackMagic2.jpg"], description: "Black Magic este un trandafir hibrid de ceai cu petale roșu închis, flori mari și catifelate. Culoare dramatică, rezistență mare." },
+  { id: 11, name: "Lavender", originalPrice: 40, promoPrice: 25, images: ["/Lavender.jpg","/Lavender2.jpg"], description: "Lavender este un trandafir cu petale mov deschis și parfum plăcut. Florile sunt medii, simbolizează misterul și eleganța." },
+  { id: 12, name: "Westerland", originalPrice: 55, promoPrice: 25, images: ["/Westerland.jpg","/Westerland2.jpg"], description: "Westerland este un trandafir urcător cu petale portocalii-caise și parfum intens. Flori semi-duble, plantă robustă." },
+  { id: 13, name: "Kristal", originalPrice: 45, promoPrice: 25, images: ["/kristal.jpg","/kristal2.jpg"], description: "Kristal este un trandafir alb cu petale pure și flori medii. Folosit la nunți, simbolizează inocența și începuturile noi." },
+  { id: 14, name: "Artemis", originalPrice: 50, promoPrice: 25, images: ["/Artemis.jpg","/Artemis2.jpg"], description: "Artemis este un trandafir cu petale alb-crem și creștere bogată. Florile sunt medii, parfum subtil." },
+  { id: 15, name: "Sympathie", originalPrice: 52, promoPrice: 25, images: ["/Sympathie.jpg","/Sympathie2.jpg"], description: "Sympathie este un trandafir urcător cu petale roșu intens și flori mari, semi-duble. Viguroasă, ideală pentru garduri." },
+  { id: 16, name: "Red Intuition", originalPrice: 48, promoPrice: 25, images: ["/RedIntuition.jpg","/RedIntuition2.jpg"], description: "Red Intuition este un trandafir hibrid de ceai cu petale roșii striate. Florile sunt mari și cu model unic." },
+  { id: 17, name: "Osiria", originalPrice: 46, promoPrice: 25, images: ["/Osiria.jpg","/Osiria2.jpg"], description: "Osiria este un trandafir hibrid de ceai cu petale bicolore, roșu exterior și alb interior. Florile sunt mari și parfumate." },
+  { id: 18, name: "Black Madona", originalPrice: 53, promoPrice: 25, images: ["/BlackMadona.jpg","/BlackMadona2.jpg"], description: "Black Madona este un trandafir cu petale burgundy și textură catifelată. Florile sunt mari, ideale pentru ocazii speciale." },
+  { id: 19, name: "Alinka", originalPrice: 30, promoPrice: 25, images: ["/Alinka.jpg","/Alinka2.jpg"], description: "Alinka este un trandafir cu petale galbene cu margini roșii, flori medii și vesele. Culoare vibrantă, creștere compactă." },
+  { id: 20, name: "Remy Martin", originalPrice: 32, promoPrice: 25, images: ["/RemyMartin.jpg","/RemyMartin2.jpg"], description: "Remy Martin este un trandafir cu petale galben-aurii și flori medii. Apreciat pentru culoarea luminoasă." },
+  { id: 21, name: "Dulceata de Gem", originalPrice: 39, promoPrice: 25, images: ["/DulceataDeGem.jpg","/DulceataDeGem2.jpg"], description: "Dulceata de Gem este un trandafir cu petale roz și aspect delicat. Florile sunt medii, aduc farmec grădinii." },
+  { id: 22, name: "Indigoletta Urcator", originalPrice: 41, promoPrice: 25, images: ["/IndigolettaUrcator.jpg","/IndigolettaUrcator2.jpg"], description: "Indigoletta Urcator este un trandafir urcător cu petale lavandă-albastre și flori medii. Ideal pentru grădini verticale." },
+  { id: 23, name: "Red Berlin", originalPrice: 65, promoPrice: 25, images: ["/RedBerlin.jpg","/RedBerlin2.jpg"], description: "Red Berlin este un trandafir hibrid de ceai cu petale roșii aprinse și flori mari, clasice. Culoare vibrantă, creștere puternică." },
+  { id: 24, name: "Peace", originalPrice: 45, promoPrice: 25, images: ["/Peace.jpg","/Peace2.jpg"], description: "Peace este un trandafir hibrid de ceai celebru, cu petale galbene cu margini roz. Flori mari, parfumate, simbol al armoniei." },
+  { id: 25, name: "Alb Urcator", originalPrice: 45, promoPrice: 25, images: ["/AlbUrcator.jpg","/AlbUrcator2.jpg"], description: "Alb Urcator este un trandafir urcător cu petale albe pure și flori medii. Ideal pentru spații verticale, aduce eleganță grădinii." },
+  { id: 26, name: "Golden Showers", originalPrice: 55, promoPrice: 25, images: ["/GoldenShowers.jpg","/GoldenShowers2.jpg"], description: "Golden Showers este un trandafir urcător cu petale galbene aprinse și flori semi-duble. Viguroasă, perfectă pentru garduri și pergole." },
 ];
 
 function HomeContent() {
@@ -298,8 +299,7 @@ function HomeContent() {
               {selectedProduct.promoPrice} lei
             </p>
             <p className="text-sm text-gray-700 mb-4 text-center">
-              {/* Placeholder for rose description, you can add a description property to Product type */}
-              Descriere trandafir: Frumusețe născută în grădina noastră.
+              {selectedProduct.description}
             </p>
             <div className="flex justify-center items-center mb-4 gap-2">
               <button

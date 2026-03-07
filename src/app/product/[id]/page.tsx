@@ -52,8 +52,7 @@ function ProductPageInner({ params }: { params: { id: string } | Promise<{ id: s
           <p className="text-red-900 font-bold text-2xl">{product.promoPrice} lei</p>
         </div>
         <div className="mb-6 p-4 bg-pink-100 rounded text-gray-700 text-center">
-          {/* You can add a product.description property for custom text */}
-          Descriere trandafir: Frumusețe născută în grădina noastră. Trandafir de tip Grand Gala, ideal pentru grădini elegante.
+          {product.description}
         </div>
         <div className="flex justify-center items-center mb-4 gap-2">
           <button
