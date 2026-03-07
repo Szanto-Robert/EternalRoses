@@ -5,8 +5,11 @@ import { createContext, useContext, useState, ReactNode } from "react";
 type CartItem = {
   id: number;
   name: string;
-  price: number;
+  price: number;         // required for calculations
   quantity: number;
+  image: string;
+  originalPrice?: number; // optional, just for display
+  promoPrice?: number;    // optional
 };
 
 type CartContextType = {
