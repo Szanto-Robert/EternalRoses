@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { adminDb } from "@/lib/firebase-admin";
 
 type OrderItem = {
   id: number;
@@ -47,35 +47,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Lipsesc câmpuri obligatorii." }, { status: 400 });
     }
 
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const orderToEmail = process.env.ORDER_TO_EMAIL;
-    const fromEmail = process.env.ORDER_FROM_EMAIL || "onboarding@resend.dev";
-
-    if (!resendApiKey || !orderToEmail) {
-      return NextResponse.json(
-        { error: "Lipsesc variabilele de mediu pentru email (RESEND_API_KEY / ORDER_TO_EMAIL)." },
-        { status: 500 }
-      );
-    }
-
-    const resend = new Resend(resendApiKey);
-
-    const orderLines = items
-      .map((item) => {
-        const unitPrice = item.promoPrice ?? item.price ?? 0;
-        const lineTotal = unitPrice * item.quantity;
-        return `- ${item.name}: ${item.quantity} x ${unitPrice} lei = ${lineTotal} lei`;
-      })
-      .join("\n");
-
     const total = items.reduce((sum, item) => {
       const unitPrice = item.promoPrice ?? item.price ?? 0;
       return sum + unitPrice * item.quantity;
     }, 0);
 
     const orderRef = `ER-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const collectionName = process.env.FIREBASE_ORDERS_COLLECTION || "orders";
 
-    // Backup in Vercel Function logs so orders can be recovered even if email fails.
     console.info(
       "ORDER_BACKUP",
       JSON.stringify({
@@ -87,31 +66,22 @@ export async function POST(request: Request) {
       })
     );
 
-    const sendResult = await resend.emails.send({
-      from: fromEmail,
-      to: orderToEmail,
-      subject: `Comandă nouă ${orderRef} - ${customer.nume}`,
-      text: `Ai primit o comandă nouă.\n\nReferință comandă: ${orderRef}\n\nClient:\nNume: ${customer.nume}\nTelefon: ${customer.telefon}\nJudeț: ${customer.judet}\nLocalitate: ${customer.localitate}\nStrada: ${customer.strada}\nNumăr: ${customer.numar}\nCod poștal: ${customer.codPostal || "-"}\n\nProduse:\n${orderLines}\n\nTotal: ${total} lei`,
+    await adminDb.collection(collectionName).doc(orderRef).set({
+      orderRef,
+      createdAt: new Date().toISOString(),
+      customer,
+      items,
+      total,
+      status: "new",
     });
-
-    if (sendResult.error) {
-      const providerMessage =
-        typeof sendResult.error.message === "string"
-          ? sendResult.error.message
-          : "Email provider error";
-
-      console.error("Resend send error:", sendResult.error);
-      return NextResponse.json(
-        {
-          error: `Nu s-a putut trimite emailul comenzii: ${providerMessage}. Referință comandă: ${orderRef}`,
-        },
-        { status: 502 }
-      );
-    }
 
     return NextResponse.json({ ok: true, orderRef });
   } catch (error) {
     console.error("Orders API error:", error);
-    return NextResponse.json({ error: "Eroare internă la trimiterea comenzii." }, { status: 500 });
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Eroare internă la salvarea comenzii.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

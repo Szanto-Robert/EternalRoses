@@ -16,36 +16,43 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Order Notifications (Email)
+## Order Storage (Firebase)
 
-The checkout form sends orders to `POST /api/orders` and emails the order details using Resend.
+The checkout form sends orders to `POST /api/orders` and saves the order in Firebase Firestore.
 
 ### 1) Configure environment variables
 
 Copy `.env.example` to `.env.local` and set:
 
-- `RESEND_API_KEY`
-- `ORDER_TO_EMAIL`
-- `ORDER_FROM_EMAIL` (optional; defaults to `onboarding@resend.dev`)
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_ORDERS_COLLECTION` (optional)
 
 ### 2) Configure on Vercel
 
 In your Vercel project settings, add the same environment variables:
 
-- `RESEND_API_KEY`
-- `ORDER_TO_EMAIL`
-- `ORDER_FROM_EMAIL` (optional)
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_ORDERS_COLLECTION` (optional)
 
 Then redeploy the project.
 
-### Order Backup (No Domain Setup)
+### Firebase Setup
+
+1. Create a Firebase project.
+2. Enable Firestore Database.
+3. Go to Project Settings -> Service Accounts.
+4. Generate a new private key.
+5. Put the service account values into your env vars.
+
+### Order Backup
 
 Every order is also written to Vercel Function logs with a unique reference (`orderRef`) using the `ORDER_BACKUP` log entry.
 
-If email sending fails:
-
-- the customer sees an error that includes `Referință comandă`
-- you can recover full order details from Vercel logs by searching `ORDER_BACKUP` or that reference
+You can recover full order details from Vercel logs by searching `ORDER_BACKUP` or that reference.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
