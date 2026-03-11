@@ -118,20 +118,27 @@ function HomeContent() {
         }),
       });
 
+      let responseData: { ok?: boolean; orderRef?: string; error?: string } | null = null;
+      try {
+        responseData = (await response.json()) as {
+          ok?: boolean;
+          orderRef?: string;
+          error?: string;
+        };
+      } catch {
+        responseData = null;
+      }
+
       if (!response.ok) {
         let apiMessage = "Nu am putut trimite comanda.";
-        try {
-          const errorData = (await response.json()) as { error?: string };
-          if (errorData?.error) {
-            apiMessage = errorData.error;
-          }
-        } catch {
-          // Keep fallback message if response is not JSON.
+        if (responseData?.error) {
+          apiMessage = responseData.error;
         }
         throw new Error(apiMessage);
       }
 
-      alert(`Comanda a fost trimisă cu succes. Mulțumim, ${form.nume}!`);
+      const refPart = responseData?.orderRef ? ` Referință: ${responseData.orderRef}.` : "";
+      alert(`Comanda a fost trimisă cu succes. Mulțumim, ${form.nume}!${refPart}`);
       clearCart();
       setCheckout(false);
       setForm({

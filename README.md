@@ -38,6 +38,15 @@ In your Vercel project settings, add the same environment variables:
 
 Then redeploy the project.
 
+### Order Backup (No Domain Setup)
+
+Every order is also written to Vercel Function logs with a unique reference (`orderRef`) using the `ORDER_BACKUP` log entry.
+
+If email sending fails:
+
+- the customer sees an error that includes `Referință comandă`
+- you can recover full order details from Vercel logs by searching `ORDER_BACKUP` or that reference
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

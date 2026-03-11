@@ -73,11 +73,25 @@ export async function POST(request: Request) {
       return sum + unitPrice * item.quantity;
     }, 0);
 
+    const orderRef = `ER-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+
+    // Backup in Vercel Function logs so orders can be recovered even if email fails.
+    console.info(
+      "ORDER_BACKUP",
+      JSON.stringify({
+        orderRef,
+        createdAt: new Date().toISOString(),
+        customer,
+        items,
+        total,
+      })
+    );
+
     const sendResult = await resend.emails.send({
       from: fromEmail,
       to: orderToEmail,
-      subject: `Comandă nouă - ${customer.nume}`,
-      text: `Ai primit o comandă nouă.\n\nClient:\nNume: ${customer.nume}\nTelefon: ${customer.telefon}\nJudeț: ${customer.judet}\nLocalitate: ${customer.localitate}\nStrada: ${customer.strada}\nNumăr: ${customer.numar}\nCod poștal: ${customer.codPostal || "-"}\n\nProduse:\n${orderLines}\n\nTotal: ${total} lei`,
+      subject: `Comandă nouă ${orderRef} - ${customer.nume}`,
+      text: `Ai primit o comandă nouă.\n\nReferință comandă: ${orderRef}\n\nClient:\nNume: ${customer.nume}\nTelefon: ${customer.telefon}\nJudeț: ${customer.judet}\nLocalitate: ${customer.localitate}\nStrada: ${customer.strada}\nNumăr: ${customer.numar}\nCod poștal: ${customer.codPostal || "-"}\n\nProduse:\n${orderLines}\n\nTotal: ${total} lei`,
     });
 
     if (sendResult.error) {
@@ -88,12 +102,14 @@ export async function POST(request: Request) {
 
       console.error("Resend send error:", sendResult.error);
       return NextResponse.json(
-        { error: `Nu s-a putut trimite emailul comenzii: ${providerMessage}` },
+        {
+          error: `Nu s-a putut trimite emailul comenzii: ${providerMessage}. Referință comandă: ${orderRef}`,
+        },
         { status: 502 }
       );
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, orderRef });
   } catch (error) {
     console.error("Orders API error:", error);
     return NextResponse.json({ error: "Eroare internă la trimiterea comenzii." }, { status: 500 });
