@@ -16,6 +16,28 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Order Notifications (Email)
+
+The checkout form sends orders to `POST /api/orders` and emails the order details using Resend.
+
+### 1) Configure environment variables
+
+Copy `.env.example` to `.env.local` and set:
+
+- `RESEND_API_KEY`
+- `ORDER_TO_EMAIL`
+- `ORDER_FROM_EMAIL` (optional; defaults to `onboarding@resend.dev`)
+
+### 2) Configure on Vercel
+
+In your Vercel project settings, add the same environment variables:
+
+- `RESEND_API_KEY`
+- `ORDER_TO_EMAIL`
+- `ORDER_FROM_EMAIL` (optional)
+
+Then redeploy the project.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

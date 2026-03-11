@@ -64,8 +64,9 @@ function HomeContent() {
       const [heroIdx, setHeroIdx] = useState(0);
     // For modal image carousel
     const [modalImageIdx, setModalImageIdx] = useState(0);
-  const { cartItems, addToCart, removeFromCart } = useCart();
+  const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
   const { checkout, setCheckout } = useCart();
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
 
   const [form, setForm] = useState({
     nume: "",
@@ -94,19 +95,50 @@ function HomeContent() {
     setQuantities({ ...quantities, [id]: value });
   };
 
-  const handleOrder = () => {
-    alert(
-      `Mulțumim, ${form.nume}! Te vom contacta la ${form.telefon} pentru confirmarea comenzii.`
-    );
-    setForm({
-      nume: "",
-      telefon: "",
-      judet: "",
-      localitate: "",
-      strada: "",
-      numar: "",
-      codPostal: "",
-    });
+  const handleOrder = async () => {
+    if (cartItems.length === 0) {
+      alert("Coșul este gol.");
+      return;
+    }
+
+    if (!form.nume || !form.telefon || !form.judet || !form.localitate || !form.strada || !form.numar) {
+      alert("Completează toate câmpurile obligatorii.");
+      return;
+    }
+
+    try {
+      setIsSubmittingOrder(true);
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: form,
+          items: cartItems,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Nu am putut trimite comanda.");
+      }
+
+      alert(`Comanda a fost trimisă cu succes. Mulțumim, ${form.nume}!`);
+      clearCart();
+      setCheckout(false);
+      setForm({
+        nume: "",
+        telefon: "",
+        judet: "",
+        localitate: "",
+        strada: "",
+        numar: "",
+        codPostal: "",
+      });
+    } catch {
+      alert("A apărut o problemă la trimiterea comenzii. Te rugăm să încerci din nou.");
+    } finally {
+      setIsSubmittingOrder(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -404,10 +436,11 @@ function HomeContent() {
               </label>
             ))}
             <button
-              className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+              className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition disabled:opacity-70 disabled:cursor-not-allowed"
               onClick={handleOrder}
+              disabled={isSubmittingOrder}
             >
-              Plasează comanda
+              {isSubmittingOrder ? "Se trimite comanda..." : "Plasează comanda"}
             </button>
           </div>
         </section>
