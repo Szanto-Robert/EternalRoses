@@ -119,7 +119,16 @@ function HomeContent() {
       });
 
       if (!response.ok) {
-        throw new Error("Nu am putut trimite comanda.");
+        let apiMessage = "Nu am putut trimite comanda.";
+        try {
+          const errorData = (await response.json()) as { error?: string };
+          if (errorData?.error) {
+            apiMessage = errorData.error;
+          }
+        } catch {
+          // Keep fallback message if response is not JSON.
+        }
+        throw new Error(apiMessage);
       }
 
       alert(`Comanda a fost trimisă cu succes. Mulțumim, ${form.nume}!`);
@@ -134,8 +143,11 @@ function HomeContent() {
         numar: "",
         codPostal: "",
       });
-    } catch {
-      alert("A apărut o problemă la trimiterea comenzii. Te rugăm să încerci din nou.");
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : "A apărut o problemă la trimiterea comenzii. Te rugăm să încerci din nou.";
+      alert(message);
     } finally {
       setIsSubmittingOrder(false);
     }

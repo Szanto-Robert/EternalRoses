@@ -73,15 +73,29 @@ export async function POST(request: Request) {
       return sum + unitPrice * item.quantity;
     }, 0);
 
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: fromEmail,
       to: orderToEmail,
       subject: `Comandă nouă - ${customer.nume}`,
       text: `Ai primit o comandă nouă.\n\nClient:\nNume: ${customer.nume}\nTelefon: ${customer.telefon}\nJudeț: ${customer.judet}\nLocalitate: ${customer.localitate}\nStrada: ${customer.strada}\nNumăr: ${customer.numar}\nCod poștal: ${customer.codPostal || "-"}\n\nProduse:\n${orderLines}\n\nTotal: ${total} lei`,
     });
 
+    if (sendResult.error) {
+      const providerMessage =
+        typeof sendResult.error.message === "string"
+          ? sendResult.error.message
+          : "Email provider error";
+
+      console.error("Resend send error:", sendResult.error);
+      return NextResponse.json(
+        { error: `Nu s-a putut trimite emailul comenzii: ${providerMessage}` },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error("Orders API error:", error);
     return NextResponse.json({ error: "Eroare internă la trimiterea comenzii." }, { status: 500 });
   }
 }
