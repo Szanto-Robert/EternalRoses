@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useCart } from "./context/CartContext";
 import FloatingCartIcon from "./components/FloatingCartIcon";
 
@@ -44,6 +45,7 @@ export const products: Product[] = [
 ];
 
 function HomeContent() {
+  const router = useRouter();
       // Hero carousel state
       const heroItems = [
         {
@@ -220,7 +222,7 @@ function HomeContent() {
               key={product.id}
               className="bg-white rounded-xl shadow-lg p-6 text-center relative cursor-pointer hover:ring-2 hover:ring-red-400 transition"
               onClick={() => {
-                window.location.href = `/product/${product.id}`;
+                router.push(`/product/${product.id}`);
               }}
             >
                 {/* Discount badge */}

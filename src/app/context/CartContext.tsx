@@ -24,6 +24,14 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = "eternalroses_cart";
 
+const persistCartItems = (items: CartItem[]) => {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Ignore storage write failures.
+  }
+};
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [checkout, setCheckout] = useState(false);
@@ -54,19 +62,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
-        return prev.map((i) =>
+        const next = prev.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
         );
+        persistCartItems(next);
+        return next;
       }
-      return [...prev, item];
+      const next = [...prev, item];
+      persistCartItems(next);
+      return next;
     });
   };
 
   const removeFromCart = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    setCartItems((prev) => {
+      const next = prev.filter((item) => item.id !== id);
+      persistCartItems(next);
+      return next;
+    });
   };
 
-  const clearCart = () => setCartItems([]);
+  const clearCart = () => {
+    setCartItems([]);
+    persistCartItems([]);
+  };
 
   return (
     <CartContext.Provider
