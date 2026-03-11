@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CartProvider, useCart } from "./context/CartContext";
+import { useCart } from "./context/CartContext";
 import FloatingCartIcon from "./components/FloatingCartIcon";
 
 export type Product = {
@@ -417,9 +417,9 @@ function HomeContent() {
 // Wrap with CartProvider
 export default function Home() {
   return (
-    <CartProvider>
+    <>
       <HomeContent />
       <FloatingCartIcon />
-    </CartProvider>
+    </>
   );
 }

@@ -1,15 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCart, CartProvider } from "../../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import { products } from "../../page";
 
 export default function ProductPageWrapper({ params }: { params: { id: string } }) {
-  return (
-    <CartProvider>
-      <ProductPageInner params={params} />
-    </CartProvider>
-  );
+  return <ProductPageInner params={params} />;
 }
 
 function ProductPageInner({ params }: { params: { id: string } | Promise<{ id: string }> }) {
@@ -19,6 +15,7 @@ function ProductPageInner({ params }: { params: { id: string } | Promise<{ id: s
   const product = products.find((p) => p.id === Number(resolvedParams.id));
   const [quantity, setQuantity] = useState(1);
   const [mainImgIdx, setMainImgIdx] = useState(0);
+  const [successMessage, setSuccessMessage] = useState("");
 
   if (!product) {
     return <div className="p-8 text-center">Produsul nu a fost găsit.</div>;
@@ -84,11 +81,19 @@ function ProductPageInner({ params }: { params: { id: string } | Promise<{ id: s
               originalPrice: product.originalPrice,
               promoPrice: product.promoPrice,
             });
-            router.push("/");
+            setSuccessMessage(
+              `Ai adăugat cu succes ${quantity} ${quantity === 1 ? "trandafir" : "trandafiri"} în coș.`
+            );
+            setTimeout(() => setSuccessMessage(""), 2200);
           }}
         >
           Adaugá în coșul tău
         </button>
+        {successMessage && (
+          <p className="mb-2 text-center text-sm text-green-700" role="status" aria-live="polite">
+            {successMessage}
+          </p>
+        )}
         <button
           className="w-full bg-gray-200 text-red-700 py-2 rounded hover:bg-gray-300 transition"
           onClick={() => router.back()}
